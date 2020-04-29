@@ -1,0 +1,133 @@
+/*
+ * Copyright (C) 2018 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+/**
+ * Shared file between builds so that they can all use the same dependencies and
+ * maven repositories.
+ **/
+ext.deps = [:]
+def versions = [:]
+versions.android_gradle_plugin = '3.6.2'
+versions.kotlin = "1.3.61"
+versions.appcompat = "1.2.0-alpha02"
+versions.constraint_layout = "2.0.0-alpha2"
+versions.android_material = "1.2.0-alpha06"
+versions.swiperefreshlayout = "1.1.0-rc01"
+versions.core_ktx = "1.1.0"
+versions.junit = "4.12"
+versions.atsl_junit = "1.1.1"
+versions.espresso = "3.2.0"
+versions.retrofit = "2.3.0"
+versions.okhttp_logging_interceptor = "3.9.0"
+versions.room = "2.2.3"
+versions.rx_android = "2.0.1"
+versions.rxjava2 = "2.1.3"
+versions.dagger = "2.27"
+versions.paging = "2.1.2"
+versions.scalable = "1.0.6"
+ext.versions = versions
+
+def build_versions = [:]
+build_versions.min_sdk = 21
+build_versions.compile_sdk = 29
+build_versions.target_sdk = 29
+build_versions.build_tools = "29.0.3"
+ext.build_versions = build_versions
+
+def deps = [:]
+
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+kotlin.allopen = "org.jetbrains.kotlin:kotlin-allopen:$versions.kotlin"
+deps.kotlin = kotlin
+
+deps.app_compat = "androidx.appcompat:appcompat:$versions.appcompat"
+
+deps.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"
+
+deps.android_material =  "com.google.android.material:material:$versions.android_material"
+
+deps.swipe_refresh_layout =  "androidx.swiperefreshlayout:swiperefreshlayout:$versions.swiperefreshlayout"
+
+deps.core_ktx = "androidx.core:core-ktx:$versions.core_ktx"
+
+deps.junit = "junit:junit:$versions.junit"
+
+// Android Test Support Library
+def atsl = [:]
+atsl.ext_junit = "androidx.test.ext:junit:$versions.atsl_junit"
+deps.atsl = atsl
+
+def espresso = [:]
+espresso.core = "androidx.test.espresso:espresso-core:$versions.espresso"
+espresso.contrib = "androidx.test.espresso:espresso-contrib:$versions.espresso"
+espresso.intents = "androidx.test.espresso:espresso-intents:$versions.espresso"
+deps.espresso = espresso
+
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+retrofit.mock = "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
+retrofit.adapter_rxjava2 = "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+deps.retrofit = retrofit
+
+deps.okhttp_logging_interceptor = "com.squareup.okhttp3:logging-interceptor:${versions.okhttp_logging_interceptor}"
+
+def room = [:]
+room.runtime = "androidx.room:room-runtime:$versions.room"
+room.compiler = "androidx.room:room-compiler:$versions.room"
+room.rxjava2 = "androidx.room:room-rxjava2:$versions.room"
+room.room_ktx = "androidx.room:room-ktx:$versions.room"
+room.testing = "androidx.room:room-testing:$versions.room"
+deps.room = room
+
+deps.rx_android = "io.reactivex.rxjava2:rxandroid:$versions.rx_android"
+
+deps.rxjava2 = "io.reactivex.rxjava2:rxjava:$versions.rxjava2"
+
+def dagger = [:]
+dagger.dagger2 = "com.google.dagger:dagger:$versions.dagger"
+dagger.compiler = "com.google.dagger:dagger-compiler:$versions.dagger"
+dagger.android = "com.google.dagger:dagger-android:$versions.dagger"
+dagger.android_support = "com.google.dagger:dagger-android-support:$versions.dagger"
+dagger.android_processor = "com.google.dagger:dagger-android-processor:$versions.dagger"
+deps.dagger = dagger
+
+def paging = [:]
+paging.paging_runtime = "androidx.paging:paging-runtime:$versions.paging"
+paging.paging_runtime_ktx = "androidx.paging:paging-runtime-ktx:$versions.paging"
+paging.paging_rxjava2 = "androidx.paging:paging-rxjava2:$versions.paging"
+deps.paging = paging
+
+def scalable = [:]
+scalable.sdp = "com.intuit.sdp:sdp-android:$versions.scalable"
+scalable.ssp = "com.intuit.ssp:ssp-android:$versions.scalable"
+deps.scalable = scalable
+
+ext.deps = deps
+
+def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+ext.addRepos = this.&addRepos

@@ -1,7 +1,8 @@
-package com.sphtech.mobiledatausage
+package com.sphtech.mobiledatausage.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.sphtech.mobiledatausage.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -10,4 +11,5 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setTitle(R.string.app_label)
     }
+
 }
