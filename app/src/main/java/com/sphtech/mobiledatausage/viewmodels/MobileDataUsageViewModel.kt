@@ -8,9 +8,10 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.sphtech.mobiledatausage.api.NetworkState
 import com.sphtech.mobiledatausage.data.DataRepository
+import com.sphtech.mobiledatausage.data.MobileDataUsage
 import com.sphtech.mobiledatausage.data.MobileDataUsageByYear
-import com.sphtech.mobiledatausage.utilities.sumByBigDecimal
 import io.reactivex.android.schedulers.AndroidSchedulers
+import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
 
@@ -23,7 +24,6 @@ class MobileDataUsageViewModel @Inject constructor(
     }
 
     val networkState = MutableLiveData<NetworkState>()
-    val yearVolumeDecreaseList = MutableLiveData<List<Int>>()
 
     @SuppressLint("CheckResult")
     fun requestMobileDataUsageFromServer() {
@@ -31,8 +31,7 @@ class MobileDataUsageViewModel @Inject constructor(
         dataRepository.getMobileDataUsage(ITEM_LIMIT)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { mutableListMobileDataUsage ->
-                    Log.d("DataUsageViewModel", "ResponseData: $mutableListMobileDataUsage")
+                {
                     networkState.value = NetworkState.LOADED
                 },
                 { errorThrowable ->
@@ -42,33 +41,42 @@ class MobileDataUsageViewModel @Inject constructor(
             )
     }
 
-    fun getMobileDataUsageDB(fromYear: Int, toYear:Int): LiveData<List<MobileDataUsageByYear>> {
+    fun getMobileDataUsageDB(fromYear: Int, toYear: Int): LiveData<List<MobileDataUsageByYear>> {
         return Transformations.map(dataRepository.getMobileDataUsageDB()) { dataUsageList ->
-            val quarterDecrease = ArrayList<Int>()
-            return@map dataUsageList.groupBy { mobileDataUsage ->
-                mobileDataUsage.quarter.substring(0, 4)
-            }
-                .mapValues {
-                    it.value.iterator().let { valueIterator ->
-                        var current = it.value[0]
-                        while (valueIterator.hasNext()) {
-                            val nextValue = valueIterator.next()
-                            if (current.dataVolume > nextValue.dataVolume) {
-                                quarterDecrease.add(it.key.toInt())
-                            }
-                            current = nextValue
-                        }
-                        yearVolumeDecreaseList.postValue(quarterDecrease)
-                    }
-                    return@mapValues it.value.sumByBigDecimal { mobileDataUsage->
-                        mobileDataUsage.dataVolume }
-                }.toList().map { pairValue ->
-                    MobileDataUsageByYear(
-                        pairValue.first.toInt(),
-                        pairValue.second
-                    )
-                }.filter { dataUsageByYear -> dataUsageByYear.year in fromYear..toYear }
+            return@map mapDataUsageQuarterToYear(dataUsageList, fromYear, toYear)
         }
+    }
+
+    fun mapDataUsageQuarterToYear(
+        mobileDataUsageList: List<MobileDataUsage>,
+        fromYear: Int,
+        toYear: Int
+    ): List<MobileDataUsageByYear> {
+        val quarterDecrease = ArrayList<String>()
+        return mobileDataUsageList.groupBy { mobileDataUsage ->
+            mobileDataUsage.quarter.substring(0, 4)
+        }
+            .mapValues {
+                var volumeTotal = BigDecimal.ZERO
+                it.value.iterator().let { valueIterator ->
+                    var current = it.value[0]
+                    while (valueIterator.hasNext()) {
+                        val nextValue = valueIterator.next()
+                        volumeTotal += nextValue.dataVolume
+                        if (current.dataVolume > nextValue.dataVolume) {
+                            quarterDecrease.add(it.key)
+                        }
+                        current = nextValue
+                    }
+                }
+                return@mapValues volumeTotal
+            }.toList().map { pairValue ->
+                MobileDataUsageByYear(
+                    pairValue.first.toInt(),
+                    pairValue.second,
+                    quarterDecrease.indexOf(pairValue.first) >= 0
+                )
+            }.filter { dataUsageByYear -> dataUsageByYear.year in fromYear..toYear }
     }
 
 }

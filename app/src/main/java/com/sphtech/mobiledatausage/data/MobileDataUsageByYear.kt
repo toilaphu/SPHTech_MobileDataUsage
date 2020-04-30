@@ -2,7 +2,7 @@ package com.sphtech.mobiledatausage.data
 
 import java.math.BigDecimal
 
-data class MobileDataUsageByYear(var year: Int, var value: BigDecimal) {
+data class MobileDataUsageByYear(var year: Int, var value: BigDecimal, var isVolumeDecrease: Boolean) {
     override fun equals(other: Any?) = (other is MobileDataUsageByYear) && year == other.year
     override fun hashCode(): Int {
         var result = year

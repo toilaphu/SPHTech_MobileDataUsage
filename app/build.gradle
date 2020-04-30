@@ -14,14 +14,14 @@ android {
         applicationId "com.sphtech.mobiledatausage"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -59,10 +59,6 @@ dependencies {
     implementation deps.room.runtime
     implementation deps.room.room_ktx
 
-    implementation deps.junit
-    implementation deps.atsl.ext_junit
-    implementation deps.espresso.core
-
     implementation deps.dagger.dagger2
     implementation deps.dagger.android
     implementation deps.dagger.android_support
@@ -73,4 +69,16 @@ dependencies {
 
     implementation deps.scalable.sdp
     implementation deps.scalable.ssp
+
+    androidTestImplementation deps.atsl.rules
+    androidTestImplementation deps.atsl.ext_junit
+    androidTestImplementation deps.espresso.core
+    androidTestImplementation deps.arch_core.testing
+
+    testImplementation deps.junit
+    testImplementation deps.atsl.ext_junit
+    testImplementation deps.atsl.mockwebserver
+    testImplementation deps.atsl.robolectric
+    testImplementation deps.arch_core.testing
+
 }

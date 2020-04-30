@@ -53,9 +53,6 @@ class DataUsageFragment : Fragment() {
                     if (networkState?.status == Status.FAILED && mobileDataUsageByYears.isEmpty()) View.VISIBLE else View.GONE
                 adapter.submitList(mobileDataUsageByYears)
             })
-        mobileDataUsageViewModel.yearVolumeDecreaseList.observe(this, Observer {
-            adapter.updateYearVolumeDecrease(it)
-        })
         mobileDataUsageViewModel.networkState.observe(this, Observer {
             networkState = it
             if (it.status == Status.FAILED) {

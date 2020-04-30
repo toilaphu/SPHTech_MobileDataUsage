@@ -11,6 +11,6 @@ class Converters {
 
     @TypeConverter
     fun stringToBigDecimal(string: String): BigDecimal {
-        return string.toBigDecimal()
+        return BigDecimal(string.replace(",",""))
     }
 }

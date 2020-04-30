@@ -17,7 +17,6 @@ class DataRepository @Inject constructor(
         dataUsageRetrofitClient.getMobileDataUsage(limitValue).subscribeOn(Schedulers.io())
             .flatMap { dataResponse -> Observable.fromIterable(dataResponse.result?.records) }
             .flatMap { mobileDataUsage ->
-                Log.d("DataRepository", "resultResource: $mobileDataUsage")
                 mobileDataUsage.let {
                     appDatabase.mobileDataUsageDao().insertMobileDataUsage(it)
                     Observable.just(it)
