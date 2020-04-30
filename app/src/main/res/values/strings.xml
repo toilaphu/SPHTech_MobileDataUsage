@@ -4,4 +4,5 @@
     <string name="error_notice">Something went wrong!\nCheck your network &amp; swipe-down to reload data.</string>
     <string name="year_label">Year</string>
     <string name="mobile_data_volume_label">Volume (Petabytes)</string>
+    <string name="call_api_error_notice">Failed to load data!</string>
 </resources>

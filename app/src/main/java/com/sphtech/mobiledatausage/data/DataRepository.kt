@@ -1,10 +1,6 @@
 package com.sphtech.mobiledatausage.data
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.paging.Config
-import androidx.paging.PagedList
-import androidx.paging.toLiveData
 import com.sphtech.mobiledatausage.api.DataUsageRetrofitClient
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -28,13 +24,6 @@ class DataRepository @Inject constructor(
                 }
             }.toList().toObservable()
 
-    fun getMobileDataUsageDB(): LiveData<PagedList<MobileDataUsage>> =
-        appDatabase.mobileDataUsageDao().getMobileDataUsage().toLiveData(
-            Config(
-                pageSize = 30,
-                enablePlaceholders = true,
-                maxSize = 200
-            )
-        )
+    fun getMobileDataUsageDB() = appDatabase.mobileDataUsageDao().getMobileDataUsage()
 
 }

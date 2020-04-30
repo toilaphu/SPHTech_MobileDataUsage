@@ -2,19 +2,18 @@ package com.sphtech.mobiledatausage.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.sphtech.mobiledatausage.R
 import com.sphtech.mobiledatausage.adapters.DataUsageAdapter
 import com.sphtech.mobiledatausage.api.NetworkState
 import com.sphtech.mobiledatausage.api.Status
-import com.sphtech.mobiledatausage.data.MobileDataUsageByYear
 import com.sphtech.mobiledatausage.databinding.FragmentDataUsageBinding
-import com.sphtech.mobiledatausage.utilities.sumByBigDecimal
 import com.sphtech.mobiledatausage.viewmodels.MobileDataUsageViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -45,30 +44,25 @@ class DataUsageFragment : Fragment() {
 
         mobileDataUsageViewModel =
             ViewModelProvider(this, factory).get(MobileDataUsageViewModel::class.java)
+
         mobileDataUsageViewModel.requestMobileDataUsageFromServer()
-        mobileDataUsageViewModel.getMobileDataUsageDB().observe(this, Observer { mobileDataUsages ->
-            mobileDataUsages?.let { dataUsageList ->
-                Log.d("DataUsageFragment", "DataUsageList: $dataUsageList")
-                val mobileDataUsageByYears = dataUsageList.groupBy { mobileDataUsage ->
-                    mobileDataUsage.quarter.substring(0, 4)
-                }
-                    .mapValues {
-                        it.value.sumByBigDecimal { it.dataVolume }
-                    }.toList().map { pairValue ->
-                        MobileDataUsageByYear(
-                            pairValue.first.toInt(),
-                            pairValue.second
-                        )
-                    }.filter { dataUsageByYear -> dataUsageByYear.year in 2008..2018 }
-                Log.d("DataUsageFragment", "DataUsageList-AfterGroup: $mobileDataUsageByYears")
+        mobileDataUsageViewModel.getMobileDataUsageDB(2008, 2018)
+            .observe(this, Observer { mobileDataUsageByYears ->
                 binding.isEmptyData = mobileDataUsageByYears.isEmpty()
                 binding.emptyNotice.visibility =
                     if (networkState?.status == Status.FAILED && mobileDataUsageByYears.isEmpty()) View.VISIBLE else View.GONE
                 adapter.submitList(mobileDataUsageByYears)
-            }
+            })
+        mobileDataUsageViewModel.yearVolumeDecreaseList.observe(this, Observer {
+            adapter.updateYearVolumeDecrease(it)
         })
         mobileDataUsageViewModel.networkState.observe(this, Observer {
             networkState = it
+            if (it.status == Status.FAILED) {
+                binding.emptyNotice.visibility =
+                    if (adapter.itemCount <= 0) View.VISIBLE else View.GONE
+                Toast.makeText(activity, R.string.call_api_error_notice, Toast.LENGTH_SHORT).show()
+            }
             binding.swipeRefreshView.isRefreshing =
                 (it.status == Status.RUNNING && isShowLoadingOnSwipe)
         })

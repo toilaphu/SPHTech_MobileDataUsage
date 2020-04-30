@@ -5,9 +5,15 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="dataUsageByYear"
             type="com.sphtech.mobiledatausage.data.MobileDataUsageByYear" />
+
+        <variable
+            name="isDecrease"
+            type="Boolean" />
     </data>
 
     <com.sphtech.mobiledatausage.views.MaskedCardView
@@ -20,31 +26,48 @@
         app:cardPreventCornerOverlap="false"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.DataUsage.Card">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-       android:padding="@dimen/_5sdp">
-
-        <TextView
-            android:id="@+id/item_time"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{String.valueOf(dataUsageByYear.year)}"
-            app:layout_constraintEnd_toStartOf="@id/item_value"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="2020" />
+            android:padding="@dimen/_5sdp">
 
-        <TextView
-            android:id="@+id/item_value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{String.valueOf(dataUsageByYear.value)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/item_time"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="0.000718" />
+            <TextView
+                android:id="@+id/item_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(dataUsageByYear.year)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/item_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2020" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/item_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(dataUsageByYear.value)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_time"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="0.000718" />
+
+            <ImageView
+                android:id="@+id/decrease_btn"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/decrease_btn_bg"
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/decrease_ic"
+                android:visibility="@{isDecrease ? View.VISIBLE: View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.sphtech.mobiledatausage.views.MaskedCardView>
 </layout>
